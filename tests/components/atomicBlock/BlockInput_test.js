@@ -7,7 +7,7 @@
 import React from "react";
 import { mount } from "enzyme";
 
-import { BlockInput } from "../../../src/components/plugin";
+import { BlockInput } from "../../../src/components/atomicBlock";
 
 describe("BlockInput Component", () => {
   let testContext;

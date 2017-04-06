@@ -9,9 +9,9 @@ import { mount } from "enzyme";
 
 import Media from "../../src/components/Media";
 import { editorStateFromRaw } from "../../src/utils";
-import DEFAULT_PLUGINS from "../../src/plugins/default";
 import i18nConfig from "../../src/i18n";
-import errorPlugin from "../../tests/plugins/error/plugin";
+import errorAtomicBlock from "../../tests/atomicBlocks/error";
+import DEFAULT_ATOMIC_BLOCKS from "../../src/atomicBlocks/default";
 
 describe("Media Component", () => {
   let testContext;
@@ -40,10 +40,9 @@ describe("Media Component", () => {
 
     testContext = {};
     testContext.editorState = editorStateFromRaw(INITIAL_CONTENT);
-
     testContext.blockProps = {};
     testContext.blockProps.editorState = testContext.editorState;
-    testContext.blockProps.plugin = DEFAULT_PLUGINS[0];
+    testContext.blockProps.atomicBlock = DEFAULT_ATOMIC_BLOCKS[0];
     testContext.blockProps.onChange = jest.fn();
     testContext.blockProps.setRea = jest.fn();
     testContext.blockProps.getEditorState = () => testContext.editorState;

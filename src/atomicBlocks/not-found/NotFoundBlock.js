@@ -6,7 +6,7 @@
 
 import React, { Component } from "react";
 
-import { BlockContent, CommonBlock } from "../../components/plugin";
+import { BlockContent, CommonBlock } from "../../components/atomicBlock";
 import MediaMessage from "../../components/MediaMessage";
 import icons from "../../icons";
 import { replaceData } from "../../i18n";
@@ -30,8 +30,8 @@ class NotFoundBlock extends Component {
       data: { type }
     } = this.props;
     const errorMsg = type
-      ? "Can't show plugin, component {{type}} not found."
-      : "Can't show plugin, component not found.";
+      ? "Can't show atomicBlock, component {{type}} not found."
+      : "Can't show atomicBlock, component not found.";
     const text = replaceData(i18n[errorMsg], { type: type && type.toString() });
     return (
       <CommonBlock {...this.props} actions={this.actions}>

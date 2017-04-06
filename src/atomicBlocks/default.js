@@ -4,7 +4,7 @@
  * License: MIT
  */
 
-import image from "./image/plugin";
-import video from "./video/plugin";
+import image from "./image";
+import video from "./video";
 
 export default [image, video];

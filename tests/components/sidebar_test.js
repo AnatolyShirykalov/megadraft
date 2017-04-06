@@ -9,18 +9,18 @@ import { mount } from "enzyme";
 import cp from "utils-copy";
 import i18nConfig from "../../src/i18n";
 import Sidebar, { ToggleButton, SideMenu } from "../../src/components/Sidebar";
-import PluginsModal from "../../src/components/PluginsModal";
-import image from "../../src/plugins/image/plugin";
+import AtomicBlocksModal from "../../src/components/AtomicBlocksModal";
+import image from "../../src/atomicBlocks/image";
 import { editorStateFromRaw } from "../../src/utils";
-import DEFAULT_PLUGINS from "../../src/plugins/default.js";
-import ImageButton from "../../src/plugins/image/ImageButton";
+import DEFAULT_ATOMIC_BLOCKS from "../../src/atomicBlocks/default.js";
+import ImageButton from "../../src/atomicBlocks/image/ImageButton";
 
 class SidebarWrapper extends Component {
   constructor(props) {
     super(props);
     this.state = { ...props };
-    this.plugins = this.props.plugins || DEFAULT_PLUGINS;
     this.editorHasFocus = true;
+    this.atomicBlocks = this.props.atomicBlocks || DEFAULT_ATOMIC_BLOCKS;
     this.onChange = ::this.onChange;
   }
 
@@ -34,7 +34,7 @@ class SidebarWrapper extends Component {
         <Sidebar
           i18n={this.props.i18n}
           ref="sidebar"
-          plugins={this.plugins}
+          atomicBlocks={this.atomicBlocks}
           editorState={this.state.editorState}
           readOnly={this.props.readOnly}
           onChange={this.onChange}
@@ -49,11 +49,12 @@ class SidebarWithModalWrapper extends Component {
   constructor(props) {
     super(props);
     this.state = { ...props };
-    this.plugins = this.props.plugins || DEFAULT_PLUGINS;
-    this.fakeAux = cp(this.plugins.slice(0, 2));
-    this.fakePlugins = this.fakeAux.concat(this.plugins.slice(0, 2));
+    this.atomicBlocks = this.props.atomicBlocks || DEFAULT_ATOMIC_BLOCKS;
+    this.fakeAux = cp(this.atomicBlocks.slice(0, 2));
+    this.fakeAtomicBlocks = this.fakeAux.concat(this.atomicBlocks.slice(0, 2));
+
     for (let i = 0; i < 4; i++) {
-      this.fakePlugins[i].type = "plugin" + i;
+      this.fakeAtomicBlocks[i].type = "atomicBlock" + i;
     }
     this.maxSidebarButtons = 3;
     this.modalOptions = { width: 500, height: 300 };
@@ -71,7 +72,7 @@ class SidebarWithModalWrapper extends Component {
         <Sidebar
           i18n={this.props.i18n}
           ref="sidebar"
-          plugins={this.fakePlugins}
+          atomicBlocks={this.fakeAtomicBlocks}
           editorState={this.state.editorState}
           readOnly={this.props.readOnly}
           onChange={this.onChange}
@@ -131,22 +132,22 @@ describe("Sidebar Component", () => {
     expect(sidebar.html()).toBeNull();
   });
 
-  it("renders enabled plugins", () => {
+  it("renders enabled atomicBlocks", () => {
     const button = wrapper.find(image.buttonComponent);
     expect(button).toHaveLength(1);
   });
 
-  it("renders only valid plugins", () => {
-    const invalidPlugin = {
-      type: "invalid-plugin",
+  it("renders only valid atomicBlocks", () => {
+    const invalidAtomicBlock = {
+      type: "invalid-atomcBlock",
       blockComponent: {}
     };
-    const plugins = [image, invalidPlugin];
+    const atomicBlocks = [image, invalidAtomicBlock];
     const wrapper = mount(
-      <SidebarWrapper editorState={editorState} plugins={plugins} />
+      <SidebarWrapper editorState={this.editorState} atomicBlocks={atomicBlocks} />
     );
     const sidemenu = wrapper.find(SideMenu);
-    expect(sidemenu.prop("plugins")).toHaveLength(1);
+    expect(sidemenu.prop("atomicBlocks")).toHaveLength(1);
   });
 
   it("has the menu hidden by default", () => {
@@ -183,7 +184,7 @@ describe("Sidebar Component", () => {
     expect(data.get("src")).toEqual("http://www.globo.com");
   });
 
-  it("should have a modal button when there is 4 plugins", () => {
+  it("should have a modal button when there is 4 atomicBlocks", () => {
     const toggleButton = wrapperSidebarModal.find(ToggleButton);
     const domButton = toggleButton.find("button");
 
@@ -194,12 +195,12 @@ describe("Sidebar Component", () => {
     const domModalButton = domMenu.at(4);
     domModalButton.simulate("click");
 
-    const modal = wrapperSidebarModal.find(PluginsModal);
+    const modal = wrapperSidebarModal.find(AtomicBlocksModal);
     const domModal = modal.find("Modal");
     expect(domModal.prop("className")).toEqual("megadraft-modal");
   });
 
-  it("should not have a modal button with less than 4 plugins", () => {
+  it("should not have a modal button with less than 4 atomicBlocks", () => {
     const toggleButton = wrapper.find(ToggleButton);
     const domButton = toggleButton.find("button");
 
@@ -212,7 +213,7 @@ describe("Sidebar Component", () => {
     expect(domModalButton.exists()).toBeFalsy();
   });
 
-  it("should have plugins in modal if it's avaiable", () => {
+  it("should have atomicBlocks in modal if it's avaiable", () => {
     const toggleButton = wrapperSidebarModal.find(ToggleButton);
     const domButton = toggleButton.find("button");
 
@@ -225,7 +226,7 @@ describe("Sidebar Component", () => {
     domModalButton.simulate("click");
 
     const modal = wrapperSidebarModal.find(PluginsModal);
-    const items = modal.prop("plugins").length;
+    const items = modal.prop("atomicBlocks").length;
     expect(items).toBeGreaterThanOrEqual(1);
   });
 
@@ -239,7 +240,7 @@ describe("Sidebar Component", () => {
     const domModalButton = domMenu.at(4);
 
     domModalButton.simulate("click");
-    const modal = wrapperSidebarModal.find(PluginsModal);
+    const modal = wrapperSidebarModal.find(AtomicBlocksModal);
     const domModal = modal.find("Modal");
 
     expect(domModal.prop("width")).toBeDefined();
@@ -270,7 +271,7 @@ describe("Sidebar Component", () => {
 
   it("should be able to change the modal title via i18n", () => {
     wrapperSidebarModal.setProps({ i18n: i18nConfig["pt-BR"] });
-    const modal = wrapperSidebarModal.find(PluginsModal);
+    const modal = wrapperSidebarModal.find(AtomicBlocksModal);
     const domModal = modal.find("Modal");
 
     expect(domModal.prop("title")).toEqual("Lista de Blocos");

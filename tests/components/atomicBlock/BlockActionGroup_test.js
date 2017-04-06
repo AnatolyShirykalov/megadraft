@@ -9,8 +9,8 @@ import { mount } from "enzyme";
 
 import icons from "../../../src/icons";
 
-import BlockActionGroup from "../../../src/components/plugin/BlockActionGroup";
-import BlockAction from "../../../src/components/plugin/BlockAction";
+import BlockActionGroup from "../../../src/components/atomicBlock/BlockActionGroup";
+import BlockAction from "../../../src/components/atomicBlock/BlockAction";
 
 describe("BlockActionGroup Component", () => {
   let testContext;
