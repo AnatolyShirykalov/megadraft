@@ -18,10 +18,8 @@
   );
   return x;
 };
-
 import React, { Component } from "react";
 import {
-  Editor,
   RichUtils,
   getDefaultKeyBinding,
   EditorState,
@@ -31,14 +29,16 @@ import {
 } from "draft-js";
 import Immutable from "immutable";
 
-import DefaultToolbar from "./Toolbar";
-import Sidebar from "./Sidebar";
 import Media from "./Media";
 import i18nConfig from "../i18n";
 import notFoundAtomicBlock from "../atomicBlocks/not-found";
+import Editor from "draft-js-plugins-editor";
+import DefaultToolbar from "./Toolbar";
+import Sidebar from "./Sidebar";
 import DEFAULT_ATOMIC_BLOCKS from "../atomicBlocks/default";
 import DEFAULT_ACTIONS from "../actions/default";
 import DEFAULT_ENTITY_INPUTS from "../entity_inputs/default";
+import createCorePlugin from "../createCorePlugin";
 
 const NO_RESET_STYLE_DEFAULT = ["ordered-list-item", "unordered-list-item"];
 
@@ -72,9 +72,6 @@ export default class MegadraftEditor extends Component {
     this.getInitialReadOnly = ::this.getInitialReadOnly;
     this.setInitialReadOnly = ::this.setInitialReadOnly;
 
-    this.externalKeyBindings = ::this.externalKeyBindings;
-
-    this.atomicBlocks = this.getValidAtomicBlocks();
     this.entityInputs = this.props.entityInputs || DEFAULT_ENTITY_INPUTS;
     this.blocksWithoutStyleReset =
       this.props.blocksWithoutStyleReset || NO_RESET_STYLE_DEFAULT;
@@ -272,6 +269,14 @@ export default class MegadraftEditor extends Component {
     const newState = RichUtils.insertSoftNewline(editorState);
     this.props.onChange(newState);
     return true;
+  getValidAtomicBlocks(atomicBlocks) {
+    return atomicBlocks.filter((atomicBlock) => {
+      const isInvalid = (!atomicBlock || typeof atomicBlock.type !== "string");
+      if (isInvalid) {
+        console.warn("AtomicBlock: Missing `type` field. Details: ", atomicBlock);
+      }
+      return !isInvalid;
+    });
   }
 
   focus() {
@@ -392,6 +397,11 @@ export default class MegadraftEditor extends Component {
   render() {
     const hideSidebarOnBlur = this.props.hideSidebarOnBlur || false;
     const i18n = this.props.i18n[this.props.language];
+    let { atomicBlocks, ...props } = this.props;
+    atomicBlocks = this.getValidAtomicBlocks(atomicBlocks || DEFAULT_ATOMIC_BLOCKS);
+
+    const plugins = this.props.plugins || [];
+
     return (
       <div className="megadraft">
         <div
@@ -405,39 +415,34 @@ export default class MegadraftEditor extends Component {
         >
           {this.renderSidebar({
             i18n: i18n,
-            atomicBlocks: this.atomicBlocks,
-            editorState: this.props.editorState,
+            atomicBlocks: atomicBlocks,
+            editorState: props.editorState,
             readOnly: this.state.readOnly,
             onChange: this.onChange,
-            maxSidebarButtons: this.props.maxSidebarButtons,
-            modalOptions: this.props.modalOptions,
+            maxSidebarButtons: props.maxSidebarButtons,
+            modalOptions: props.modalOptions,
             editorHasFocus: this.state.hasFocus,
             hideSidebarOnBlur: hideSidebarOnBlur
           })}
           <Editor
-            {...this.props}
+            {...props}
             ref={el => {
               this.draftEl = el;
             }}
             readOnly={this.state.readOnly}
-            atomicBlocks={this.atomicBlocks}
-            blockRendererFn={this.mediaBlockRenderer}
-            blockStyleFn={this.props.blockStyleFn || this.blockStyleFn}
-            onTab={this.onTab}
-            handleKeyCommand={this.handleKeyCommand}
-            handleReturn={this.props.handleReturn || this.handleReturn}
-            keyBindingFn={this.externalKeyBindings}
+            atomicBlocks={atomicBlocks}
+            plugins={[corePlugin, ...plugins]}
             onChange={this.onChange}
           />
           {this.renderToolbar({
             i18n: i18n,
             editor: this.editorEl,
             draft: this.draftEl,
-            editorState: this.props.editorState,
+            editorState: props.editorState,
             editorHasFocus: this.state.hasFocus,
             readOnly: this.state.readOnly,
             onChange: this.onChange,
-            actions: this.props.actions,
+            actions: props.actions,
             entityInputs: this.entityInputs,
             shouldDisplayToolbarFn: this.props.shouldDisplayToolbarFn
           })}

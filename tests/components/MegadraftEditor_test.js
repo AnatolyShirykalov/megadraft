@@ -26,6 +26,8 @@ const replaceSelection = (newSelection, wrapper, blockKey) => {
   wrapper.setState({ editorState: editorState });
 };
 
+
+
 class MegadraftEditorWrapper extends Component {
   constructor(props) {
     super(props);
@@ -38,7 +40,6 @@ class MegadraftEditorWrapper extends Component {
         i18n={i18nConfig["en-US"]}
         editorState={this.state.editorState}
         onChange={this.props.onChange}
-        keyBindings={this.props.keyBindings}
         blocksWithoutStyleReset={this.props.blocksWithoutStyleReset}
         resetStyleNewLine={this.props.resetStyleNewLine}
       />
@@ -454,6 +455,19 @@ describe("MegadraftEditor Component", () => {
 
       expect(result).toEqual(null);
     });
+
+  it("passes extra plugins to the draft-js editor", function() {
+    const fakePlugin = {fake: "plugin"};
+    const wrapper = mount(
+      <MegadraftEditor
+        editorState={this.editorState}
+        onChange={this.onChange}
+        plugins={[fakePlugin]}
+      />
+    );
+    const plugins = wrapper.ref("draft").props().plugins;
+    expect(plugins.length).toEqual(2);
+    expect(plugins[1]).toEqual(fakePlugin);
   });
 
   it("starts with default readOnly status", () => {

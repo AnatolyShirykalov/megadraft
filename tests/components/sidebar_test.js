@@ -6,7 +6,6 @@
 
 import React, { Component } from "react";
 import { mount } from "enzyme";
-import cp from "utils-copy";
 import i18nConfig from "../../src/i18n";
 import Sidebar, { ToggleButton, SideMenu } from "../../src/components/Sidebar";
 import AtomicBlocksModal from "../../src/components/AtomicBlocksModal";
@@ -49,13 +48,12 @@ class SidebarWithModalWrapper extends Component {
   constructor(props) {
     super(props);
     this.state = { ...props };
-    this.atomicBlocks = this.props.atomicBlocks || DEFAULT_ATOMIC_BLOCKS;
-    this.fakeAux = cp(this.atomicBlocks.slice(0, 2));
-    this.fakeAtomicBlocks = this.fakeAux.concat(this.atomicBlocks.slice(0, 2));
 
-    for (let i = 0; i < 4; i++) {
-      this.fakeAtomicBlocks[i].type = "atomicBlock" + i;
-    }
+    const atomicBlocksConcat = [...DEFAULT_ATOMIC_BLOCKS, ...DEFAULT_ATOMIC_BLOCKS];
+    this.atomicBlocks = atomicBlocksConcat.map((block, i) => (
+      {...block, type: `${block.type}${i}`}
+    ));
+
     this.maxSidebarButtons = 3;
     this.modalOptions = { width: 500, height: 300 };
     this.editorHasFocus = true;
@@ -72,7 +70,7 @@ class SidebarWithModalWrapper extends Component {
         <Sidebar
           i18n={this.props.i18n}
           ref="sidebar"
-          atomicBlocks={this.fakeAtomicBlocks}
+          atomicBlocks={this.atomicBlocks}
           editorState={this.state.editorState}
           readOnly={this.props.readOnly}
           onChange={this.onChange}
