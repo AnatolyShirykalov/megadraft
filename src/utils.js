@@ -137,3 +137,13 @@ export function delayCall(fn, interval = 100) {
     timeout = window.setTimeout(() => fn.apply(window, args), interval);
   };
 }
+
+const _warnings = [];
+
+export function warnOnce(message) {
+  if (_warnings.indexOf(message) !== -1) {
+    return;
+  }
+  _warnings.push(message);
+  console.warn(message);
+}
