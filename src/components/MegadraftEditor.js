@@ -38,7 +38,6 @@ import Sidebar from "./Sidebar";
 import DEFAULT_ATOMIC_BLOCKS from "../atomicBlocks/default";
 import DEFAULT_ACTIONS from "../actions/default";
 import DEFAULT_ENTITY_INPUTS from "../entity_inputs/default";
-import createCorePlugin from "../createCorePlugin";
 
 const NO_RESET_STYLE_DEFAULT = ["ordered-list-item", "unordered-list-item"];
 
@@ -79,18 +78,6 @@ export default class MegadraftEditor extends Component {
     this.atomicBlocksByType = this.getAtomicBlocksByType();
 
     this.keyBindings = this.props.keyBindings || [];
-  }
-
-  getValidAtomicBlocks() {
-    let atomicBlocks = [];
-    for (let atomicBlock of this.props.atomicBlocks || DEFAULT_ATOMIC_BLOCKS) {
-      if (!atomicBlock || typeof atomicBlock.type !== "string") {
-        console.warn("AtomicBlock: Missing `type` field. Details: ", atomicBlock);
-        continue;
-      }
-      atomicBlocks.push(atomicBlock);
-    }
-    return atomicBlocks;
   }
 
   getAtomicBlocksByType() {
@@ -269,11 +256,16 @@ export default class MegadraftEditor extends Component {
     const newState = RichUtils.insertSoftNewline(editorState);
     this.props.onChange(newState);
     return true;
+  }
+
   getValidAtomicBlocks(atomicBlocks) {
-    return atomicBlocks.filter((atomicBlock) => {
-      const isInvalid = (!atomicBlock || typeof atomicBlock.type !== "string");
+    return atomicBlocks.filter(atomicBlock => {
+      const isInvalid = !atomicBlock || typeof atomicBlock.type !== "string";
       if (isInvalid) {
-        console.warn("AtomicBlock: Missing `type` field. Details: ", atomicBlock);
+        console.warn(
+          "AtomicBlock: Missing `type` field. Details: ",
+          atomicBlock
+        );
       }
       return !isInvalid;
     });
@@ -343,7 +335,8 @@ export default class MegadraftEditor extends Component {
 
     const type = block.getData().toObject().type;
 
-    let atomicBlock = this.atomicBlocksByType[type] || this.handleBlockNotFound(block);
+    let atomicBlock =
+      this.atomicBlocksByType[type] || this.handleBlockNotFound(block);
     if (!atomicBlock) {
       return null;
     }
@@ -356,7 +349,9 @@ export default class MegadraftEditor extends Component {
         atomicBlock: atomicBlock,
         // TODO: temporary compatibility for old plugins
         get plugin() {
-          console.warn("Megadraft will remove `blockProps.plugin` prop from future versions, please use `blockProps.atomicBlock` instead");
+          console.warn(
+            "Megadraft will remove `blockProps.plugin` prop from future versions, please use `blockProps.atomicBlock` instead"
+          );
           return atomicBlock;
         },
         onChange: this.onChange,
@@ -398,7 +393,9 @@ export default class MegadraftEditor extends Component {
     const hideSidebarOnBlur = this.props.hideSidebarOnBlur || false;
     const i18n = this.props.i18n[this.props.language];
     let { atomicBlocks, ...props } = this.props;
-    atomicBlocks = this.getValidAtomicBlocks(atomicBlocks || DEFAULT_ATOMIC_BLOCKS);
+    atomicBlocks = this.getValidAtomicBlocks(
+      atomicBlocks || DEFAULT_ATOMIC_BLOCKS
+    );
 
     const plugins = this.props.plugins || [];
 
@@ -431,7 +428,7 @@ export default class MegadraftEditor extends Component {
             }}
             readOnly={this.state.readOnly}
             atomicBlocks={atomicBlocks}
-            plugins={[corePlugin, ...plugins]}
+            plugins={plugins}
             onChange={this.onChange}
           />
           {this.renderToolbar({
