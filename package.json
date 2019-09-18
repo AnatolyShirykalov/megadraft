@@ -1,6 +1,6 @@
 {
   "name": "megadraft-with-plugins",
-  "version": "0.6.7",
+  "version": "0.6.7.1",
   "description": "Rich Text editor built on top of draft.js",
   "main": "lib/Megadraft.js",
   "dependencies": {
@@ -121,7 +121,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Anatoly/megadraft.git"
+    "url": "git+https://github.com/AnatolyShirykalov/megadraft.git"
   },
   "files": [
     "dist",
@@ -138,5 +138,5 @@
   "bugs": {
     "url": "https://github.com/globocom/megadraft/issues"
   },
-  "homepage": "https://github.com/globocom/megadraft#readme"
+  "homepage": "https://github.com/AnatolyShirykalov/megadraft#readme"
 }

@@ -1,3 +1,6 @@
+
+This is branch https://github.com/globocom/megadraft/tree/draftjs-plugins-integration rebased on master
+
 # Megadraft [![Build Status](https://secure.travis-ci.org/globocom/megadraft.png?branch=master)](https://travis-ci.org/globocom/megadraft) [![npm version](https://img.shields.io/npm/v/megadraft.svg?style=flat)](https://www.npmjs.com/package/megadraft)
 
 Rich Text editor built on top of [Facebook's draft.js](https://github.com/facebook/draft-js)
