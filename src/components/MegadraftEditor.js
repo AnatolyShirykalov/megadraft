@@ -428,14 +428,14 @@ export default class MegadraftEditor extends Component {
             }}
             readOnly={this.state.readOnly}
             atomicBlocks={atomicBlocks}
-            blockRendererFn={this.mediaBlockRenderer}
-            blockStyleFn={this.props.blockStyleFn || this.blockStyleFn}
+            blockRendererFn={::this.mediaBlockRenderer}
+            blockStyleFn={this.props.blockStyleFn || ::this.blockStyleFn}
             onTab={this.onTab}
-            handleKeyCommand={this.handleKeyCommand}
-            handleReturn={this.props.handleReturn || this.handleReturn}
-            keyBindingFn={this.externalKeyBindings}
+            handleKeyCommand={::this.handleKeyCommand}
+            handleReturn={this.props.handleReturn || ::this.handleReturn}
+            keyBindingFn={::this.externalKeyBindings}
             plugins={plugins}
-            onChange={this.onChange}
+            onChange={::this.onChange}
           />
           {this.renderToolbar({
             i18n: i18n,
