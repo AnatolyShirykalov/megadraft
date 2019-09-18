@@ -7,7 +7,7 @@
 import React from "react";
 import { shallow } from "enzyme";
 import icons from "../../../src/icons";
-import NotFoundBlock from "../../../src/plugins/not-found/NotFoundBlock";
+import NotFoundBlock from "../../../src/atomicBlocks/not-found/NotFoundBlock";
 import i18nConfig from "../../../src/i18n";
 
 describe("NotFoundBlock Component", () => {
@@ -39,7 +39,7 @@ describe("NotFoundBlock Component", () => {
   it("should return the correct message", () => {
     const wrapper = testContext.renderComponent();
     expect(wrapper.find("MediaMessage").props().text).toEqual(
-      "Can't show plugin, component foo not found."
+      "Can't show atomicBlock, component foo not found."
     );
   });
   it("should render message even without a type", () => {
@@ -50,7 +50,7 @@ describe("NotFoundBlock Component", () => {
     };
     const wrapper = testContext.renderComponent(props);
     expect(wrapper.find("MediaMessage").props().text).toEqual(
-      "Can't show plugin, component not found."
+      "Can't show atomicBlock, component not found."
     );
   });
 });

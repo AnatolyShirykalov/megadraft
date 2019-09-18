@@ -5,7 +5,8 @@
  */
 
 import React, { Component } from "react";
-import { Editor, EditorState, SelectionState } from "draft-js";
+import { EditorState, SelectionState } from "draft-js";
+import Editor from "draft-js-plugins-editor";
 import { mount } from "enzyme";
 
 import MegadraftEditor from "../../src/components/MegadraftEditor";
@@ -25,8 +26,6 @@ const replaceSelection = (newSelection, wrapper, blockKey) => {
 
   wrapper.setState({ editorState: editorState });
 };
-
-
 
 class MegadraftEditorWrapper extends Component {
   constructor(props) {
@@ -69,6 +68,7 @@ describe("MegadraftEditor Component", () => {
   }
 
   beforeEach(() => {
+    console.log("before each");
     const INITIAL_CONTENT = {
       entityMap: {},
       blocks: [
@@ -185,7 +185,7 @@ describe("MegadraftEditor Component", () => {
     );
   });
 
-  it("renders Media component", () => {
+  it("renders media component", () => {
     const items = testContext.wrapper.find(Media);
     expect(items).toHaveLength(1);
   });
@@ -455,9 +455,10 @@ describe("MegadraftEditor Component", () => {
 
       expect(result).toEqual(null);
     });
+  });
 
   it("passes extra plugins to the draft-js editor", function() {
-    const fakePlugin = {fake: "plugin"};
+    const fakePlugin = { fake: "plugin" };
     const wrapper = mount(
       <MegadraftEditor
         editorState={this.editorState}
@@ -673,7 +674,9 @@ describe("MegadraftEditor Component", () => {
 
   it("passes required props to default sidebar", () => {
     const sidebar = testContext.wrapper.find(Sidebar);
-    expect(sidebar.prop("atomicBlocks")).toEqual(testContext.component.atomicBlocks);
+    expect(sidebar.prop("atomicBlocks")).toEqual(
+      testContext.component.atomicBlocks
+    );
     expect(sidebar.prop("onChange")).toEqual(testContext.component.onChange);
     expect(sidebar.prop("editorState")).toEqual(testContext.editorState);
     expect(sidebar.prop("readOnly")).toBeFalsy();
@@ -717,7 +720,12 @@ describe("MegadraftEditor Component", () => {
       }
     }
     const renderCustomSidebar = (atomicBlocks, editorState) => {
-      return <MyCustomSidebar atomicBlocks={atomicBlocks} editorState={editorState} />;
+      return (
+        <MyCustomSidebar
+          atomicBlocks={atomicBlocks}
+          editorState={editorState}
+        />
+      );
     };
     const wrapper = mount(
       <MegadraftEditor

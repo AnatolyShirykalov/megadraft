@@ -106,7 +106,8 @@ describe("Media Component", () => {
     it("renders with problems", () => {
       const blockProps = {};
       blockProps.editorState = testContext.editorState;
-      blockProps.plugin = errorPlugin;
+      blockProps.plugin = errorAtomicBlock;
+      blockProps.atomicBlock = errorAtomicBlock;
       blockProps.i18n = i18nConfig["en-US"];
       blockProps.onChange = jest.fn();
       blockProps.getEditorState = () => testContext.editorState;

@@ -83,7 +83,7 @@ export default class MegadraftEditor extends Component {
   getAtomicBlocksByType() {
     let atomicBlocksByType = {};
 
-    for (let atomicBlock of this.atomicBlocks) {
+    for (let atomicBlock of this.props.atomicBlocks || DEFAULT_ATOMIC_BLOCKS) {
       atomicBlocksByType[atomicBlock.type] = atomicBlock;
     }
 
