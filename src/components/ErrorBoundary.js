@@ -6,7 +6,7 @@
 
 import React, { Component } from "react";
 
-import { BlockContent, CommonBlock } from "./plugin";
+import { BlockContent, CommonBlock } from "./atomicBlock";
 import MediaMessage from "./MediaMessage";
 import icons from "../icons";
 import { replaceData } from "../i18n";

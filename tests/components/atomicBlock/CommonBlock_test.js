@@ -9,7 +9,7 @@ import { mount } from "enzyme";
 
 import icons from "../../../src/icons";
 import Dropdown from "../../../src/components/Dropdown";
-import CommonBlock from "../../../src/components/plugin/CommonBlock";
+import CommonBlock from "../../../src/components/atomicBlock/CommonBlock";
 
 describe("CommonBlock Component", () => {
   let testContext;
@@ -27,7 +27,7 @@ describe("CommonBlock Component", () => {
     ];
     const defaultDisplay = "medium";
     const blockProps = {
-      plugin: { options: { displayOptions, defaultDisplay } }
+      atomicBlock: { options: { displayOptions, defaultDisplay } }
     };
 
     testContext.container = {

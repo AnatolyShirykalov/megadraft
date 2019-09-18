@@ -18,10 +18,8 @@
   );
   return x;
 };
-
 import React, { Component } from "react";
 import {
-  Editor,
   RichUtils,
   getDefaultKeyBinding,
   EditorState,
@@ -31,12 +29,13 @@ import {
 } from "draft-js";
 import Immutable from "immutable";
 
-import DefaultToolbar from "./Toolbar";
-import Sidebar from "./Sidebar";
 import Media from "./Media";
 import i18nConfig from "../i18n";
-import notFoundPlugin from "../plugins/not-found/plugin";
-import DEFAULT_PLUGINS from "../plugins/default";
+import notFoundAtomicBlock from "../atomicBlocks/not-found";
+import Editor from "draft-js-plugins-editor";
+import DefaultToolbar from "./Toolbar";
+import Sidebar from "./Sidebar";
+import DEFAULT_ATOMIC_BLOCKS from "../atomicBlocks/default";
 import DEFAULT_ACTIONS from "../actions/default";
 import DEFAULT_ENTITY_INPUTS from "../entity_inputs/default";
 
@@ -72,38 +71,23 @@ export default class MegadraftEditor extends Component {
     this.getInitialReadOnly = ::this.getInitialReadOnly;
     this.setInitialReadOnly = ::this.setInitialReadOnly;
 
-    this.externalKeyBindings = ::this.externalKeyBindings;
-
-    this.plugins = this.getValidPlugins();
     this.entityInputs = this.props.entityInputs || DEFAULT_ENTITY_INPUTS;
     this.blocksWithoutStyleReset =
       this.props.blocksWithoutStyleReset || NO_RESET_STYLE_DEFAULT;
 
-    this.pluginsByType = this.getPluginsByType();
+    this.atomicBlocksByType = this.getAtomicBlocksByType();
 
     this.keyBindings = this.props.keyBindings || [];
   }
 
-  getValidPlugins() {
-    let plugins = [];
-    for (let plugin of this.props.plugins || DEFAULT_PLUGINS) {
-      if (!plugin || typeof plugin.type !== "string") {
-        console.warn("Plugin: Missing `type` field. Details: ", plugin);
-        continue;
-      }
-      plugins.push(plugin);
-    }
-    return plugins;
-  }
+  getAtomicBlocksByType() {
+    let atomicBlocksByType = {};
 
-  getPluginsByType() {
-    let pluginsByType = {};
-
-    for (let plugin of this.plugins) {
-      pluginsByType[plugin.type] = plugin;
+    for (let atomicBlock of this.props.atomicBlocks || DEFAULT_ATOMIC_BLOCKS) {
+      atomicBlocksByType[atomicBlock.type] = atomicBlock;
     }
 
-    return pluginsByType;
+    return atomicBlocksByType;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -274,6 +258,19 @@ export default class MegadraftEditor extends Component {
     return true;
   }
 
+  getValidAtomicBlocks(atomicBlocks) {
+    return atomicBlocks.filter(atomicBlock => {
+      const isInvalid = !atomicBlock || typeof atomicBlock.type !== "string";
+      if (isInvalid) {
+        console.warn(
+          "AtomicBlock: Missing `type` field. Details: ",
+          atomicBlock
+        );
+      }
+      return !isInvalid;
+    });
+  }
+
   focus() {
     this.draftEl.focus();
   }
@@ -299,7 +296,7 @@ export default class MegadraftEditor extends Component {
     if (this.props.handleBlockNotFound) {
       return this.props.handleBlockNotFound(block);
     }
-    return notFoundPlugin;
+    return notFoundAtomicBlock;
   }
 
   handleFocus() {
@@ -338,8 +335,9 @@ export default class MegadraftEditor extends Component {
 
     const type = block.getData().toObject().type;
 
-    let plugin = this.pluginsByType[type] || this.handleBlockNotFound(block);
-    if (!plugin) {
+    let atomicBlock =
+      this.atomicBlocksByType[type] || this.handleBlockNotFound(block);
+    if (!atomicBlock) {
       return null;
     }
 
@@ -348,7 +346,14 @@ export default class MegadraftEditor extends Component {
       editable: false,
       props: {
         i18n: this.props.i18n[this.props.language],
-        plugin: plugin,
+        atomicBlock: atomicBlock,
+        // TODO: temporary compatibility for old plugins
+        get plugin() {
+          console.warn(
+            "Megadraft will remove `blockProps.plugin` prop from future versions, please use `blockProps.atomicBlock` instead"
+          );
+          return atomicBlock;
+        },
         onChange: this.onChange,
         editorState: this.props.editorState,
         getEditorState: this.getEditorState,
@@ -387,6 +392,13 @@ export default class MegadraftEditor extends Component {
   render() {
     const hideSidebarOnBlur = this.props.hideSidebarOnBlur || false;
     const i18n = this.props.i18n[this.props.language];
+    let { atomicBlocks, ...props } = this.props;
+    atomicBlocks = this.getValidAtomicBlocks(
+      atomicBlocks || DEFAULT_ATOMIC_BLOCKS
+    );
+
+    const plugins = this.props.plugins || [];
+
     return (
       <div className="megadraft">
         <div
@@ -400,38 +412,34 @@ export default class MegadraftEditor extends Component {
         >
           {this.renderSidebar({
             i18n: i18n,
-            plugins: this.plugins,
-            editorState: this.props.editorState,
+            atomicBlocks: atomicBlocks,
+            editorState: props.editorState,
             readOnly: this.state.readOnly,
             onChange: this.onChange,
-            maxSidebarButtons: this.props.maxSidebarButtons,
-            modalOptions: this.props.modalOptions,
+            maxSidebarButtons: props.maxSidebarButtons,
+            modalOptions: props.modalOptions,
             editorHasFocus: this.state.hasFocus,
             hideSidebarOnBlur: hideSidebarOnBlur
           })}
           <Editor
-            {...this.props}
+            {...props}
             ref={el => {
               this.draftEl = el;
             }}
             readOnly={this.state.readOnly}
-            blockRendererFn={this.mediaBlockRenderer}
-            blockStyleFn={this.props.blockStyleFn || this.blockStyleFn}
-            onTab={this.onTab}
-            handleKeyCommand={this.handleKeyCommand}
-            handleReturn={this.props.handleReturn || this.handleReturn}
-            keyBindingFn={this.externalKeyBindings}
+            atomicBlocks={atomicBlocks}
+            plugins={plugins}
             onChange={this.onChange}
           />
           {this.renderToolbar({
             i18n: i18n,
             editor: this.editorEl,
             draft: this.draftEl,
-            editorState: this.props.editorState,
+            editorState: props.editorState,
             editorHasFocus: this.state.hasFocus,
             readOnly: this.state.readOnly,
             onChange: this.onChange,
-            actions: this.props.actions,
+            actions: props.actions,
             entityInputs: this.entityInputs,
             shouldDisplayToolbarFn: this.props.shouldDisplayToolbarFn
           })}

@@ -6,7 +6,7 @@
 
 import React, { Component } from "react";
 
-export default class ModalPluginItem extends Component {
+export default class AtomicBlocksModalItem extends Component {
   constructor(props) {
     super(props);
     this.handleClick = ::this.handleClick;
@@ -53,7 +53,7 @@ export default class ModalPluginItem extends Component {
   render() {
     return (
       <ul className="megadraft-modal__items">
-        {this.props.plugins.map(this.renderButton)}
+        {this.props.atomicBlocks.map(this.renderButton)}
       </ul>
     );
   }

@@ -11,18 +11,17 @@ import {
   BlockData,
   BlockInput,
   CommonBlock
-} from "../../components/plugin";
+} from "../../components/atomicBlock";
 
 import icons from "../../icons";
 
-import ImageBlockStyle from "./ImageBlockStyle";
+import VideoBlockStyle from "./VideoBlockStyle";
 
-export default class ImageBlock extends Component {
+export default class VideoBlock extends Component {
   constructor(props) {
     super(props);
 
     this._handleCaptionChange = ::this._handleCaptionChange;
-    this._handleRightsHolderChange = ::this._handleRightsHolderChange;
 
     this.actions = [
       {
@@ -34,20 +33,19 @@ export default class ImageBlock extends Component {
   }
 
   _handleCaptionChange(event) {
-    event.stopPropagation();
     this.props.container.updateData({ caption: event.target.value });
-  }
-
-  _handleRightsHolderChange(event) {
-    event.stopPropagation();
-    this.props.container.updateData({ rightsHolder: event.target.value });
   }
 
   render() {
     return (
       <CommonBlock {...this.props} actions={this.actions}>
         <BlockContent>
-          <img style={ImageBlockStyle.image} src={this.props.data.src} alt="" />
+          <video
+            controls
+            style={VideoBlockStyle.video}
+            src={this.props.data.src}
+            alt=""
+          />
         </BlockContent>
 
         <BlockData>
@@ -55,12 +53,6 @@ export default class ImageBlock extends Component {
             placeholder="Caption"
             value={this.props.data.caption}
             onChange={this._handleCaptionChange}
-          />
-
-          <BlockInput
-            placeholder="Rights Holder"
-            value={this.props.data.rightsHolder}
-            onChange={this._handleRightsHolderChange}
           />
         </BlockData>
       </CommonBlock>

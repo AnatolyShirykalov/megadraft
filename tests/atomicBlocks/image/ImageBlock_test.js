@@ -7,7 +7,7 @@
 import React from "react";
 import { mount } from "enzyme";
 
-import ImageBlock from "../../../src/plugins/image/ImageBlock";
+import ImageBlock from "../../../src/atomicBlocks/image/ImageBlock";
 import icons from "../../../src/icons";
 
 describe("ImageBlock", () => {
@@ -30,7 +30,7 @@ describe("ImageBlock", () => {
     ];
     const defaultDisplay = "medium";
     const blockProps = {
-      plugin: { options: { displayOptions, defaultDisplay } }
+      atomicBlock: { options: {displayOptions, defaultDisplay } }
     };
 
     testContext.wrapper = mount(
