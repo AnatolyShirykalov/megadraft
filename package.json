@@ -1,5 +1,5 @@
 {
-  "name": "megadraft",
+  "name": "megadraft-with-plugins",
   "version": "0.6.7",
   "description": "Rich Text editor built on top of draft.js",
   "main": "lib/Megadraft.js",
@@ -121,7 +121,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/globocom/megadraft.git"
+    "url": "git+https://github.com/Anatoly/megadraft.git"
   },
   "files": [
     "dist",
