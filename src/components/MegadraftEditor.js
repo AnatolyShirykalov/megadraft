@@ -38,6 +38,7 @@ import Sidebar from "./Sidebar";
 import DEFAULT_ATOMIC_BLOCKS from "../atomicBlocks/default";
 import DEFAULT_ACTIONS from "../actions/default";
 import DEFAULT_ENTITY_INPUTS from "../entity_inputs/default";
+import { decorators as defaultDecorators } from "../decorators/defaultDecorator";
 
 const NO_RESET_STYLE_DEFAULT = ["ordered-list-item", "unordered-list-item"];
 
@@ -398,6 +399,7 @@ export default class MegadraftEditor extends Component {
     );
 
     const plugins = this.props.plugins || [];
+    const decorators = [...(this.props.decorators || []), ...defaultDecorators];
 
     return (
       <div className="megadraft">
@@ -428,6 +430,7 @@ export default class MegadraftEditor extends Component {
             }}
             readOnly={this.state.readOnly}
             atomicBlocks={atomicBlocks}
+            decorators={decorators}
             blockRendererFn={::this.mediaBlockRenderer}
             blockStyleFn={this.props.blockStyleFn || ::this.blockStyleFn}
             onTab={this.onTab}
